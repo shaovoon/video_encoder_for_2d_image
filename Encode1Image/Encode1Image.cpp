@@ -23,7 +23,7 @@ int main()
 }
 */
 
-/*
+
 bool renderRedImage(int width, int height, int fps, int fps_cnt, UINT32* pixels);
 
 int main()
@@ -61,7 +61,7 @@ bool renderRedImage(int width, int height, int fps, int fps_cnt, UINT32* pixels)
 	}
 	return true;
 }
-*/
+
 
 /*
 #include <Gdiplus.h>
@@ -278,7 +278,7 @@ bool renderJPG(int width, int height, int fps, int fps_cnt, UINT32* pixels)
 }
 */
 
-
+/*
 #include <Gdiplus.h>
 #pragma comment(lib, "gdiplus.lib")
 
@@ -415,3 +415,4 @@ inline UINT Alphablend(UINT dest, UINT source, BYTE nAlpha, BYTE nAlphaFinal)
 
 	return nAlphaFinal << 24 | nRed << 16 | nGreen << 8 | nBlue;
 }
+*/
