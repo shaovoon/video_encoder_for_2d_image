@@ -23,7 +23,6 @@ int main()
 }
 */
 
-
 bool renderRedImage(int width, int height, int fps, int fps_cnt, UINT32* pixels);
 
 int main()
@@ -62,126 +61,6 @@ bool renderRedImage(int width, int height, int fps, int fps_cnt, UINT32* pixels)
 	return true;
 }
 
-
-/*
-#include <Gdiplus.h>
-#pragma comment(lib, "gdiplus.lib")
-
-bool renderText(int width, int height, int fps, int fps_cnt, UINT32* pixels);
-
-int main()
-{
-	std::wstring musicFile(L"");
-	std::wstring videoFile(L"C:\\temp\\TextVideo.mp4");
-
-	std::function<bool(int, int, int, int, UINT32*)> renderFunction = renderText;
-
-	// Initialize GDI+ so that we can load the JPG
-	Gdiplus::GdiplusStartupInput m_gdiplusStartupInput;
-	ULONG_PTR m_gdiplusToken;
-
-	Gdiplus::GdiplusStartup(&m_gdiplusToken, &m_gdiplusStartupInput, NULL);
-
-	H264Writer writer(musicFile.c_str(), videoFile.c_str(), VideoCodec::H264, 640, 480, 60, 2000, renderFunction);
-	if (writer.IsValid())
-	{
-		if (writer.Process())
-		{
-			printf("Video written successfully!\n");
-			Gdiplus::GdiplusShutdown(m_gdiplusToken);
-			return 0;
-		}
-	}
-	printf("Video write failed!\n");
-	Gdiplus::GdiplusShutdown(m_gdiplusToken);
-}
-
-
-// render text
-bool renderText(int width, int height, int fps, int fps_cnt, UINT32* pixels)
-{
-	using namespace Gdiplus;
-
-	Bitmap renderbmp(width, height, PixelFormat32bppARGB);
-
-	Bitmap bmp(width, height, PixelFormat32bppARGB);
-	Bitmap bmp2(width, height, PixelFormat32bppARGB);
-	Bitmap jpg1(L"image\\Mandy.png", TRUE);
-	Bitmap jpg2(L"image\\Frenzy.png", TRUE);
-	Graphics render_g(&renderbmp);
-
-	Graphics g(&bmp);
-	Graphics g2(&bmp2);
-
-	float rectProgress = 0.0f;
-	float textProgress = 0.0f;
-	float frame_duration = 1000.0f / fps;
-	float total_duration = fps_cnt * frame_duration;
-
-	SolidBrush brush(Color::Black);
-	render_g.FillRectangle(&brush, 0, 0, width, height);
-	g.FillRectangle(&brush, 0, 0, width, height);
-
-	int rectHeight = 4;
-
-	int rectWidth = (int)(width * 0.8f);
-	if (total_duration >= 1000.0f)
-		rectProgress = 1.0f;
-	else
-		rectProgress = total_duration / 1000.0f;
-
-
-	if (total_duration >= 2000.0f)
-		textProgress = 1.0f;
-	else if (total_duration <= 1000.0f)
-		textProgress = 0.0f;
-	else
-		textProgress = (total_duration - 1000.0f) / 1000.0f;
-
-	g.DrawImage(&jpg1, (width - jpg1.GetWidth()) / 2, (height / 2) - (int)(jpg1.GetHeight() * textProgress), jpg1.GetWidth(), jpg1.GetHeight());
-	g.FillRectangle(&brush, 0, height / 2 - 4, width, height / 2 + 4);
-	render_g.DrawImage(&bmp, 0, 0, width, height);
-
-	g2.DrawImage(&jpg2, (width - jpg2.GetWidth()) / 2, (int)((height / 2 - jpg2.GetHeight()) + (int)(jpg2.GetHeight() * textProgress)), jpg2.GetWidth(), jpg2.GetHeight());
-	g2.FillRectangle(&brush, 0, 0, width, height / 2 + 4);
-	render_g.DrawImage(&bmp2, 0, height / 2 + 4, 0, height / 2 + 4, width, height / 2 - 4, Gdiplus::UnitPixel);
-
-	SolidBrush whitebrush(Color::White);
-	int start_x = (width - (int)(rectWidth * rectProgress)) / 2;
-	int pwidth = (int)(rectWidth * rectProgress);
-	render_g.FillRectangle(&whitebrush, start_x, (height - rectHeight) / 2, pwidth, rectHeight);
-
-	BitmapData bitmapData;
-	Rect rect(0, 0, width, height);
-
-	renderbmp.LockBits(
-		&rect,
-		ImageLockModeRead,
-		PixelFormat32bppARGB,
-		&bitmapData);
-
-	UINT* pixelsSrc = (UINT*)bitmapData.Scan0;
-
-	if (!pixelsSrc)
-		return false;
-
-	int stride = bitmapData.Stride >> 2;
-
-	for (int col = 0; col < width; ++col)
-	{
-		for (int row = 0; row < height; ++row)
-		{
-			int indexSrc = (height - 1 - row) * stride + col;
-			int index = row * width + col;
-			pixels[index] = pixelsSrc[indexSrc];
-		}
-	}
-
-	renderbmp.UnlockBits(&bitmapData);
-
-	return true;
-}
-*/
 
 /*
 #include <Gdiplus.h>
@@ -414,5 +293,125 @@ inline UINT Alphablend(UINT dest, UINT source, BYTE nAlpha, BYTE nAlphaFinal)
 	BYTE nBlue = (nSrcBlue * nAlpha + nDestBlue * nInvAlpha) >> 8;
 
 	return nAlphaFinal << 24 | nRed << 16 | nGreen << 8 | nBlue;
+}
+*/
+
+/*
+#include <Gdiplus.h>
+#pragma comment(lib, "gdiplus.lib")
+
+bool renderText(int width, int height, int fps, int fps_cnt, UINT32* pixels);
+
+int main()
+{
+	std::wstring musicFile(L"");
+	std::wstring videoFile(L"C:\\temp\\TextVideo.mp4");
+
+	std::function<bool(int, int, int, int, UINT32*)> renderFunction = renderText;
+
+	// Initialize GDI+ so that we can load the JPG
+	Gdiplus::GdiplusStartupInput m_gdiplusStartupInput;
+	ULONG_PTR m_gdiplusToken;
+
+	Gdiplus::GdiplusStartup(&m_gdiplusToken, &m_gdiplusStartupInput, NULL);
+
+	H264Writer writer(musicFile.c_str(), videoFile.c_str(), VideoCodec::H264, 640, 480, 60, 2000, renderFunction);
+	if (writer.IsValid())
+	{
+		if (writer.Process())
+		{
+			printf("Video written successfully!\n");
+			Gdiplus::GdiplusShutdown(m_gdiplusToken);
+			return 0;
+		}
+	}
+	printf("Video write failed!\n");
+	Gdiplus::GdiplusShutdown(m_gdiplusToken);
+}
+
+
+// render text
+bool renderText(int width, int height, int fps, int fps_cnt, UINT32* pixels)
+{
+	using namespace Gdiplus;
+
+	Bitmap renderbmp(width, height, PixelFormat32bppARGB);
+
+	Bitmap bmp(width, height, PixelFormat32bppARGB);
+	Bitmap bmp2(width, height, PixelFormat32bppARGB);
+	Bitmap jpg1(L"image\\Mandy.png", TRUE);
+	Bitmap jpg2(L"image\\Frenzy.png", TRUE);
+	Graphics render_g(&renderbmp);
+
+	Graphics g(&bmp);
+	Graphics g2(&bmp2);
+
+	float rectProgress = 0.0f;
+	float textProgress = 0.0f;
+	float frame_duration = 1000.0f / fps;
+	float total_duration = fps_cnt * frame_duration;
+
+	SolidBrush brush(Color::Black);
+	render_g.FillRectangle(&brush, 0, 0, width, height);
+	g.FillRectangle(&brush, 0, 0, width, height);
+
+	int rectHeight = 4;
+
+	int rectWidth = (int)(width * 0.8f);
+	if (total_duration >= 1000.0f)
+		rectProgress = 1.0f;
+	else
+		rectProgress = total_duration / 1000.0f;
+
+
+	if (total_duration >= 2000.0f)
+		textProgress = 1.0f;
+	else if (total_duration <= 1000.0f)
+		textProgress = 0.0f;
+	else
+		textProgress = (total_duration - 1000.0f) / 1000.0f;
+
+	g.DrawImage(&jpg1, (width - jpg1.GetWidth()) / 2, (height / 2) - (int)(jpg1.GetHeight() * textProgress), jpg1.GetWidth(), jpg1.GetHeight());
+	g.FillRectangle(&brush, 0, height / 2 - 4, width, height / 2 + 4);
+	render_g.DrawImage(&bmp, 0, 0, width, height);
+
+	g2.DrawImage(&jpg2, (width - jpg2.GetWidth()) / 2, (int)((height / 2 - jpg2.GetHeight()) + (int)(jpg2.GetHeight() * textProgress)), jpg2.GetWidth(), jpg2.GetHeight());
+	g2.FillRectangle(&brush, 0, 0, width, height / 2 + 4);
+	render_g.DrawImage(&bmp2, 0, height / 2 + 4, 0, height / 2 + 4, width, height / 2 - 4, Gdiplus::UnitPixel);
+
+	SolidBrush whitebrush(Color::White);
+	int start_x = (width - (int)(rectWidth * rectProgress)) / 2;
+	int pwidth = (int)(rectWidth * rectProgress);
+	render_g.FillRectangle(&whitebrush, start_x, (height - rectHeight) / 2, pwidth, rectHeight);
+
+	BitmapData bitmapData;
+	Rect rect(0, 0, width, height);
+
+	renderbmp.LockBits(
+		&rect,
+		ImageLockModeRead,
+		PixelFormat32bppARGB,
+		&bitmapData);
+
+	UINT* pixelsSrc = (UINT*)bitmapData.Scan0;
+
+	if (!pixelsSrc)
+		return false;
+
+	int stride = bitmapData.Stride >> 2;
+
+	for (int col = 0; col < width; ++col)
+	{
+		for (int row = 0; row < height; ++row)
+		{
+			int indexSrc = (height - 1 - row) * stride + col;
+			int index = row * width + col;
+			pixels[index] = pixelsSrc[indexSrc];
+		}
+	}
+
+	renderbmp.UnlockBits(&bitmapData);
+
+	return true;
 }
 */
