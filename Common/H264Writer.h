@@ -877,16 +877,16 @@ public:
 				{
 					success = true;
 
-					int current_duration = fps_cnt * (1000 / m_VideoFPS);
+					float current_duration = fps_cnt * (1000.0f / m_VideoFPS);
 
 					if (m_Duration == -1 && m_MP3Duration > 0)
 					{
-						if (current_duration >= m_MP3Duration)
+						if (current_duration >= (float)m_MP3Duration)
 							break;
 					}
 					else if (m_Duration > 0)
 					{
-						if (current_duration >= m_Duration)
+						if (current_duration >= (float)m_Duration)
 							break;
 					}
 
