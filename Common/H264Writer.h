@@ -871,13 +871,13 @@ public:
 
 				DWORD audio_stream = 0;
 				LONGLONG audio_timestamp = 0;
-				int fps_cnt = 0;
+				int frame_cnt = 0;
 
 				while (true)
 				{
 					success = true;
 
-					float current_duration = fps_cnt * (1000.0f / m_VideoFPS);
+					float current_duration = frame_cnt * (1000.0f / m_VideoFPS);
 
 					if (m_Duration == -1 && m_MP3Duration > 0)
 					{
@@ -892,7 +892,7 @@ public:
 
 					if (m_RenderFunction)
 					{
-						bool ret = m_RenderFunction(m_Width, m_Height, m_VideoFPS, fps_cnt++, m_pImage);
+						bool ret = m_RenderFunction(m_Width, m_Height, m_VideoFPS, frame_cnt++, m_pImage);
 						if (ret == false)
 						{
 							printf("m_RenderFunction returned false!");

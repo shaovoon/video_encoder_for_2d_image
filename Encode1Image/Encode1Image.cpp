@@ -23,7 +23,7 @@ int main()
 }
 */
 
-bool renderRedImage(int width, int height, int fps, int fps_cnt, UINT32* pixels);
+bool renderRedImage(int width, int height, int fps, int frame_cnt, UINT32* pixels);
 
 int main()
 {
@@ -45,9 +45,9 @@ int main()
 }
 
 // render a red image once!
-bool renderRedImage(int width, int height, int fps, int fps_cnt, UINT32* pixels)
+bool renderRedImage(int width, int height, int fps, int frame_cnt, UINT32* pixels)
 {
-	if (fps_cnt == 0)
+	if (frame_cnt == 0)
 	{
 		for (int col = 0; col < width; ++col)
 		{
@@ -66,7 +66,7 @@ bool renderRedImage(int width, int height, int fps, int fps_cnt, UINT32* pixels)
 #include <Gdiplus.h>
 #pragma comment(lib, "gdiplus.lib")
 
-bool renderJPG(int width, int height, int fps, int fps_cnt, UINT32* pixels);
+bool renderJPG(int width, int height, int fps, int frame_cnt, UINT32* pixels);
 
 int main()
 {
@@ -96,11 +96,11 @@ int main()
 }
 
 // render a jpg once!
-bool renderJPG(int width, int height, int fps, int fps_cnt, UINT32* pixels)
+bool renderJPG(int width, int height, int fps, int frame_cnt, UINT32* pixels)
 {
 	using namespace Gdiplus;
 	
-	if (fps_cnt == 0)
+	if (frame_cnt == 0)
 	{
 		Bitmap bmp(width, height, PixelFormat32bppARGB);
 		Bitmap jpg(L"image\\yes.jpg", TRUE);
@@ -162,7 +162,7 @@ bool renderJPG(int width, int height, int fps, int fps_cnt, UINT32* pixels)
 #pragma comment(lib, "gdiplus.lib")
 
 // render 2 jpg
-bool render2JPG(int width, int height, int fps, int fps_cnt, UINT32* pixels);
+bool render2JPG(int width, int height, int fps, int frame_cnt, UINT32* pixels);
 inline UINT Alphablend(UINT dest, UINT source, BYTE nAlpha, BYTE nAlphaFinal);
 
 int main()
@@ -194,7 +194,7 @@ int main()
 
 // render 2 jpg
 // This function takes a long time.
-bool render2JPG(int width, int height, int fps, int fps_cnt, UINT32* pixels)
+bool render2JPG(int width, int height, int fps, int frame_cnt, UINT32* pixels)
 {
 	using namespace Gdiplus;
 
@@ -208,12 +208,12 @@ bool render2JPG(int width, int height, int fps, int fps_cnt, UINT32* pixels)
 
 	BYTE alpha = 0;
 	int frame_duration = 1000 / fps;
-	if (fps_cnt * frame_duration <= 1000)
+	if (frame_cnt * frame_duration <= 1000)
 		alpha = 0;
-	else if (fps_cnt * frame_duration >= 2000)
+	else if (frame_cnt * frame_duration >= 2000)
 		alpha = 255;
 	else
-		alpha = ((fps_cnt * frame_duration) - 1000) * 255 / 1000;
+		alpha = ((frame_cnt * frame_duration) - 1000) * 255 / 1000;
 
 	float w_ratio_bmp = bmp.GetWidth() / (float)bmp.GetHeight();
 	float w_ratio_jpg = jpg1.GetWidth() / (float)jpg1.GetHeight();
@@ -300,7 +300,7 @@ inline UINT Alphablend(UINT dest, UINT source, BYTE nAlpha, BYTE nAlphaFinal)
 #include <Gdiplus.h>
 #pragma comment(lib, "gdiplus.lib")
 
-bool renderText(int width, int height, int fps, int fps_cnt, UINT32* pixels);
+bool renderText(int width, int height, int fps, int frame_cnt, UINT32* pixels);
 
 int main()
 {
@@ -331,7 +331,7 @@ int main()
 
 
 // render text
-bool renderText(int width, int height, int fps, int fps_cnt, UINT32* pixels)
+bool renderText(int width, int height, int fps, int frame_cnt, UINT32* pixels)
 {
 	using namespace Gdiplus;
 
@@ -349,7 +349,7 @@ bool renderText(int width, int height, int fps, int fps_cnt, UINT32* pixels)
 	float rectProgress = 0.0f;
 	float textProgress = 0.0f;
 	float frame_duration = 1000.0f / fps;
-	float total_duration = fps_cnt * frame_duration;
+	float total_duration = frame_cnt * frame_duration;
 
 	SolidBrush brush(Color::Black);
 	render_g.FillRectangle(&brush, 0, 0, width, height);
