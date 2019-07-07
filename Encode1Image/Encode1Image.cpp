@@ -23,6 +23,7 @@ int main()
 }
 */
 
+
 bool renderRedImage(int width, int height, int fps, int frame_cnt, UINT32* pixels);
 
 int main()
@@ -207,13 +208,14 @@ bool render2JPG(int width, int height, int fps, int frame_cnt, UINT32* pixels)
 	Graphics g2(&bmp2);
 
 	BYTE alpha = 0;
-	int frame_duration = 1000 / fps;
-	if (frame_cnt * frame_duration <= 1000)
+	float frame_duration = 1000.0 / fps;
+	float time = frame_cnt * frame_duration;
+	if (time <= 1000.0)
 		alpha = 0;
-	else if (frame_cnt * frame_duration >= 2000)
+	else if (time >= 2000.0)
 		alpha = 255;
 	else
-		alpha = ((frame_cnt * frame_duration) - 1000) * 255 / 1000;
+		alpha = (BYTE)(int)(((time) - 1000.0) / 1000.0 * 255);
 
 	float w_ratio_bmp = bmp.GetWidth() / (float)bmp.GetHeight();
 	float w_ratio_jpg = jpg1.GetWidth() / (float)jpg1.GetHeight();
@@ -349,7 +351,7 @@ bool renderText(int width, int height, int fps, int frame_cnt, UINT32* pixels)
 	float rectProgress = 0.0f;
 	float textProgress = 0.0f;
 	float frame_duration = 1000.0f / fps;
-	float total_duration = frame_cnt * frame_duration;
+	float time = frame_cnt * frame_duration;
 
 	SolidBrush brush(Color::Black);
 	render_g.FillRectangle(&brush, 0, 0, width, height);
@@ -358,18 +360,18 @@ bool renderText(int width, int height, int fps, int frame_cnt, UINT32* pixels)
 	int rectHeight = 4;
 
 	int rectWidth = (int)(width * 0.8f);
-	if (total_duration >= 1000.0f)
+	if (time >= 1000.0f)
 		rectProgress = 1.0f;
 	else
-		rectProgress = total_duration / 1000.0f;
+		rectProgress = time / 1000.0f;
 
 
-	if (total_duration >= 2000.0f)
+	if (time >= 2000.0f)
 		textProgress = 1.0f;
-	else if (total_duration <= 1000.0f)
+	else if (time <= 1000.0f)
 		textProgress = 0.0f;
 	else
-		textProgress = (total_duration - 1000.0f) / 1000.0f;
+		textProgress = (time - 1000.0f) / 1000.0f;
 
 	g.DrawImage(&jpg1, (width - jpg1.GetWidth()) / 2, (height / 2) - (int)(jpg1.GetHeight() * textProgress), jpg1.GetWidth(), jpg1.GetHeight());
 	g.FillRectangle(&brush, 0, height / 2 - 4, width, height / 2 + 4);
