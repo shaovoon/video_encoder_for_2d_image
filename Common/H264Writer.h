@@ -14,11 +14,16 @@
 #include <Codecapi.h>
 #include <vector>
 #include <string>
-#include <functional>
 
 #pragma comment(lib, "mfreadwrite")
 #pragma comment(lib, "mfplat")
 #pragma comment(lib, "mfuuid")
+
+class FrameRenderer
+{
+public:
+	virtual bool Render(int width, int height, int fps, int frame_cnt, UINT32* pixels) = 0;
+};
 
 // All video decoders and encoders support at least one of these video formats - basically
 // decoded frames (in some cases variants of bitmaps)
@@ -88,7 +93,7 @@ public:
 	// set duration to -1 when you want the duration to be the same as mp3
 	H264Writer(const wchar_t* mp3_file, const wchar_t* dest_file, VideoCodec codec, 
 		int width, int height, int fps, int duration /*in milliseconds*/, 
-		std::function<bool(int, int, int, int, UINT32*)> renderFunction,
+		FrameRenderer* frameRenderer,
 		UINT32 bitrate = 4000000) :
 		m_MP3Filename(mp3_file),
 		m_DestFilename(dest_file),
@@ -109,7 +114,7 @@ public:
 		m_nStreams(0),
 		m_Duration(duration),
 		m_MP3Duration(0),
-		m_RenderFunction(renderFunction)
+		m_FrameRenderer(frameRenderer)
 	{
 		if (m_MP3Filename == L"" && duration == -1)
 		{
@@ -890,9 +895,9 @@ public:
 							break;
 					}
 
-					if (m_RenderFunction)
+					if (m_FrameRenderer)
 					{
-						bool ret = m_RenderFunction(m_Width, m_Height, m_VideoFPS, frame_cnt++, m_pImage);
+						bool ret = m_FrameRenderer->Render(m_Width, m_Height, m_VideoFPS, frame_cnt++, m_pImage);
 						if (ret == false)
 						{
 							printf("m_RenderFunction returned false!");
@@ -966,6 +971,6 @@ private:
 	int m_nStreams;
 	int m_Duration; // duration in millisecond
 	int m_MP3Duration;
-	std::function<bool(int, int, int, int, UINT32*)> m_RenderFunction;
+	FrameRenderer* m_FrameRenderer;
 };
 
