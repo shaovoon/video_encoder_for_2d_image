@@ -58,4 +58,12 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist "$(TargetDir)\image" mkdir "$(TargetDir)\image"
+copy /Y "$(ProjectDir)\image\first.jpg" "$(TargetDir)\image\first.jpg"
+copy /Y "$(ProjectDir)\image\second.jpg" "$(TargetDir)\image\second.jpg"
+copy /Y "$(ProjectDir)\image\Mandy.png" "$(TargetDir)\image\Mandy.png"
+copy /Y "$(ProjectDir)\image\Frenzy.png" "$(TargetDir)\image\Frenzy.png"
+copy /Y "$(ProjectDir)\image\yes.jpg" "$(TargetDir)\image\yes.jpg"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
