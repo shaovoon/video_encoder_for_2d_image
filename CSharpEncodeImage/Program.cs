@@ -10,11 +10,10 @@ using System.Drawing.Imaging;
 
 namespace CSharpEncodeImage
 {
-    /*
     // render a red image once!
     public class RenderRedImage : FrameRenderer
     {
-        public override bool Render(int width, int height, int fps, int frame_cnt, UInt32[] pixels)
+        public bool Render(int width, int height, int fps, int frame_cnt, UInt32[] pixels)
         {
             if (frame_cnt == 0)
             {
@@ -53,12 +52,12 @@ namespace CSharpEncodeImage
 
         }
     }
-    */
+    
     /*
     // render a jpeg once!
     public class RenderJPG : FrameRenderer
     {
-        public override bool Render(int width, int height, int fps, int frame_cnt, UInt32[] pixels)
+        public bool Render(int width, int height, int fps, int frame_cnt, UInt32[] pixels)
         {
             if (frame_cnt == 0)
             {
@@ -115,8 +114,8 @@ namespace CSharpEncodeImage
                 bmp.UnlockBits(bitmapData);
 
                 bmp.Dispose();
-                bitmapData.Dispose();
                 jpg.Dispose();
+                brush.Dispose();
                 g.Dispose();
             }
             return true;
@@ -170,7 +169,7 @@ namespace CSharpEncodeImage
             g2.Dispose();
         }
 
-        public override bool Render(int width, int height, int fps, int frame_cnt, UInt32[] pixels)
+        public bool Render(int width, int height, int fps, int frame_cnt, UInt32[] pixels)
         {
             if (bmp == null)
             {
@@ -249,6 +248,8 @@ namespace CSharpEncodeImage
             bmp.UnlockBits(bitmapData);
             bmp2.UnlockBits(bitmapData2);
 
+            brush.Dispose();
+
             return true;
         }
 
@@ -303,6 +304,7 @@ namespace CSharpEncodeImage
     }
     */
 
+    /*
     // text animation!
     public class RenderText : FrameRenderer
     {
@@ -325,7 +327,7 @@ namespace CSharpEncodeImage
             g2.Dispose();
         }
 
-        public override bool Render(int width, int height, int fps, int frame_cnt, UInt32[] pixels)
+        public bool Render(int width, int height, int fps, int frame_cnt, UInt32[] pixels)
         {
             if (bmp == null)
             {
@@ -406,6 +408,8 @@ namespace CSharpEncodeImage
             renderbmp.UnlockBits(bitmapData);
 
             renderbmp.Dispose();
+            brush.Dispose();
+            whitebrush.Dispose();
             render_g.Dispose();
 
             return true;
@@ -441,5 +445,5 @@ namespace CSharpEncodeImage
 
         }
     }
-
+    */
 }

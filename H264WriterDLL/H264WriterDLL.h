@@ -69,9 +69,9 @@ namespace H264WriterDLL {
 		Software
 	};
 
-	public ref class FrameRenderer abstract
+	public interface class FrameRenderer
 	{
-	public: virtual bool Render(int width, int height, int fps, int frame_cnt, array<System::UInt32>^ pixels) abstract;
+	public: bool Render(int width, int height, int fps, int frame_cnt, array<System::UInt32>^ pixels);
 	};
 
 	public ref class H264Writer
