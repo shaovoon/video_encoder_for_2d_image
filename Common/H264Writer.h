@@ -247,7 +247,11 @@ public:
 				MFTIME second = total_seconds % 60;
 				printf("Audio duration:%lld:%lld\n", minute, second);
 			}
-			hr = MFCreateSinkWriterFromURL(m_DestFilename.c_str(), nullptr, nullptr, &m_pSinkWriter);
+			CComPtr<IMFAttributes> attrs;
+			MFCreateAttributes(&attrs, 0);
+			attrs->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, TRUE);
+
+			hr = MFCreateSinkWriterFromURL(m_DestFilename.c_str(), nullptr, attrs, &m_pSinkWriter);
 			BREAK_ON_FAIL(hr);
 
 			// map the streams found in the source file from the source reader to the

@@ -265,7 +265,11 @@ namespace H264WriterDLL {
 				}
 				pin_ptr<const wchar_t> dest_file = PtrToStringChars(m_DestFilename);
 				IMFSinkWriter* sink_writer = m_pSinkWriter;
-				hr = MFCreateSinkWriterFromURL(dest_file, nullptr, nullptr, &sink_writer);
+				IMFAttributes* attrs;
+				MFCreateAttributes(&attrs, 0);
+				attrs->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, TRUE);
+
+				hr = MFCreateSinkWriterFromURL(dest_file, nullptr, attrs, &sink_writer);
 				BREAK_ON_FAIL(hr);
 				m_pSinkWriter = sink_writer;
 
@@ -283,6 +287,8 @@ namespace H264WriterDLL {
 				BREAK_ON_FAIL(hr);
 
 				*videoStreamIndex = streamIndex;
+
+				SafeRelease(&attrs);
 			} while (false);
 
 			SafeRelease(&pMediaTypeOut);
