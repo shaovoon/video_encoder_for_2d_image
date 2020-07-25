@@ -262,6 +262,8 @@ namespace H264WriterDLL {
 					MFTIME total_seconds = duration / 10000000;
 					MFTIME minute = total_seconds / 60;
 					MFTIME second = total_seconds % 60;
+
+					SafeRelease(&pConfigAttrs);
 				}
 				pin_ptr<const wchar_t> dest_file = PtrToStringChars(m_DestFilename);
 				IMFSinkWriter* sink_writer = m_pSinkWriter;
