@@ -266,7 +266,7 @@ namespace H264WriterDLL {
 				pin_ptr<const wchar_t> dest_file = PtrToStringChars(m_DestFilename);
 				IMFSinkWriter* sink_writer = m_pSinkWriter;
 				IMFAttributes* attrs;
-				MFCreateAttributes(&attrs, 0);
+				MFCreateAttributes(&attrs, 1);
 				attrs->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, TRUE);
 
 				hr = MFCreateSinkWriterFromURL(dest_file, nullptr, attrs, &sink_writer);

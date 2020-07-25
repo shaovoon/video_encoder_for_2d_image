@@ -23,7 +23,7 @@ int main()
 }
 */
 
-/*
+
 class RenderRedImage : public FrameRenderer
 {
 public:
@@ -53,7 +53,7 @@ int main()
 
 	RenderRedImage frameRenderer;
 
-	H264Writer writer(musicFile.c_str(), videoFile.c_str(), VideoCodec::H264, 640, 480, 30, 5000, &frameRenderer);
+	H264Writer writer(musicFile.c_str(), videoFile.c_str(), VideoCodec::H264, 640, 480, 30, 60000, &frameRenderer);
 	if (writer.IsValid())
 	{
 		if (writer.Process())
@@ -65,7 +65,7 @@ int main()
 	printf("Video write failed!\n");
 
 }
-*/
+
 
 /*
 #include <Gdiplus.h>
@@ -330,7 +330,7 @@ int main()
 }
 */
 
-
+/*
 #include <Gdiplus.h>
 #pragma comment(lib, "gdiplus.lib")
 
@@ -472,3 +472,4 @@ int main()
 	printf("Video write failed!\n");
 	return 1;
 }
+*/
