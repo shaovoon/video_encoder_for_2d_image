@@ -13,6 +13,8 @@ attrs->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, TRUE);
 hr = MFCreateSinkWriterFromURL(m_DestFilename.c_str(), nullptr, attrs, &m_pSinkWriter);
 ```
 
+![Image of TaskMgr](https://github.com/shaovoon/video_encoder_for_2d_image/blob/master/images/TaskMgr.png)
+
 ## Quality parameters in Constructor in v0.4.2
 
 * int numWorkerThreads: 0 leaves to default
