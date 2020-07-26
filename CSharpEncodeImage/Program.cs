@@ -39,7 +39,7 @@ namespace CSharpEncodeImage
 
             RenderRedImage frameRenderer = new RenderRedImage();
 
-            H264Writer writer = new H264Writer(musicFile, videoFile, VideoCodec.H264, 640, 480, 30, 60000, frameRenderer, 4000000, 6, 100, RateControlMode.Quality, 100);
+            H264Writer writer = new H264Writer(musicFile, videoFile, VideoCodec.H264, 640, 480, 30, 60000, frameRenderer, 4000000, 0, 100, RateControlMode.Quality, 100);
             if (writer.IsValid())
             {
                 if (writer.Process())
@@ -131,7 +131,7 @@ namespace CSharpEncodeImage
 
             RenderJPG frameRenderer = new RenderJPG();
 
-            H264Writer writer = new H264Writer(musicFile, videoFile, VideoCodec.H264, 640, 480, 30, 10000, frameRenderer, 4000000, 6, 100, RateControlMode.Quality, 100);
+            H264Writer writer = new H264Writer(musicFile, videoFile, VideoCodec.H264, 640, 480, 30, 10000, frameRenderer, 4000000, 0, 100, RateControlMode.Quality, 100);
             if (writer.IsValid())
             {
                 if (writer.Process())
@@ -289,7 +289,7 @@ namespace CSharpEncodeImage
 
             Render2JPG frameRenderer = new Render2JPG("image\\first.jpg", "image\\second.jpg");
 
-            H264Writer writer = new H264Writer(musicFile, videoFile, VideoCodec.H264, 640, 480, 30, 3000, frameRenderer, 4000000, 6, 100, RateControlMode.Quality, 100);
+            H264Writer writer = new H264Writer(musicFile, videoFile, VideoCodec.H264, 640, 480, 30, 3000, frameRenderer, 4000000, 0, 100, RateControlMode.Quality, 100);
             if (writer.IsValid())
             {
                 if (writer.Process())
@@ -432,7 +432,7 @@ namespace CSharpEncodeImage
 
             RenderText frameRenderer = new RenderText("image\\Mandy.png", "image\\Frenzy.png");
 
-            H264Writer writer = new H264Writer(musicFile, videoFile, VideoCodec.H264, 640, 480, 60, 2000, frameRenderer, 4000000, 6, 100, RateControlMode.Quality, 100);
+            H264Writer writer = new H264Writer(musicFile, videoFile, VideoCodec.H264, 640, 480, 60, 2000, frameRenderer, 4000000, 0, 100, RateControlMode.Quality, 100);
             if (writer.IsValid())
             {
                 if (writer.Process())
