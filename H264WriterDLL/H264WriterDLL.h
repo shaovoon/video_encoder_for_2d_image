@@ -107,7 +107,6 @@ namespace H264WriterDLL {
 			m_cbWidth = 4 * m_Width;
 			m_cbBuffer = m_cbWidth * m_Height;
 			m_pBuffer = nullptr;
-			m_CoInited = false;
 			m_MFInited = false;
 			m_pSinkWriter = nullptr;
 			m_VideoFPS = fps;
@@ -135,28 +134,16 @@ namespace H264WriterDLL {
 			if (!m_pImage)
 				return;
 
-			//HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
-
-			//if (SUCCEEDED(hr))
+			HRESULT hr = MFStartup(MF_VERSION);
+			if (SUCCEEDED(hr))
 			{
-				m_CoInited = true;
-				HRESULT hr = MFStartup(MF_VERSION);
-				if (SUCCEEDED(hr))
-				{
-					m_MFInited = true;
-					// Create a new memory buffer.
-					IMFMediaBuffer* pBuffer = m_pBuffer;
+				m_MFInited = true;
+				// Create a new memory buffer.
+				IMFMediaBuffer* pBuffer = m_pBuffer;
 
-					hr = MFCreateMemoryBuffer(m_cbBuffer, &pBuffer);
-					m_pBuffer = pBuffer;
-				}
+				hr = MFCreateMemoryBuffer(m_cbBuffer, &pBuffer);
+				m_pBuffer = pBuffer;
 			}
-
-			if (IsValid() == false)
-			{
-				return;
-			}
-
 		}
 
 		~H264Writer()
@@ -183,14 +170,11 @@ namespace H264WriterDLL {
 
 			if (m_MFInited)
 				MFShutdown();
-
-			//if (m_CoInited)
-				//CoUninitialize();
 		}
 
 		bool IsValid()
 		{
-			return m_CoInited && m_MFInited;
+			return m_MFInited;
 		}
 
 		HRESULT GetSourceDuration(IMFMediaSource* pSource, MFTIME* pDuration)
@@ -203,7 +187,7 @@ namespace H264WriterDLL {
 			if (SUCCEEDED(hr))
 			{
 				hr = pPD->GetUINT64(MF_PD_DURATION, (UINT64*)pDuration);
-				pPD->Release();
+				SafeRelease(&pPD);
 			}
 			return hr;
 		}
@@ -257,14 +241,9 @@ namespace H264WriterDLL {
 						pSource->Release();
 
 					m_MP3Duration = duration / 10000; // in millseconds.
-
-
-					MFTIME total_seconds = duration / 10000000;
-					MFTIME minute = total_seconds / 60;
-					MFTIME second = total_seconds % 60;
-
-					SafeRelease(&pConfigAttrs);
 				}
+				SafeRelease(&pConfigAttrs);
+
 				pin_ptr<const wchar_t> dest_file = PtrToStringChars(m_DestFilename);
 				IMFSinkWriter* sink_writer = m_pSinkWriter;
 				IMFAttributes* attrs;
@@ -485,11 +464,8 @@ namespace H264WriterDLL {
 
 			} while (false);
 
-			if (pPartialMediaType) pPartialMediaType->Release();
-			if (pFullMediaType) pFullMediaType->Release();
-
-			pPartialMediaType = nullptr;
-			pFullMediaType = nullptr;
+			SafeRelease(&pPartialMediaType);
+			SafeRelease(&pFullMediaType);
 
 			return hr;
 		}
@@ -586,9 +562,7 @@ namespace H264WriterDLL {
 					sourceStreamIndex++;
 
 					// release the media type
-					if (pStreamMediaType) pStreamMediaType->Release();
-
-					pStreamMediaType = nullptr;
+					SafeRelease(&pStreamMediaType);
 				}
 
 				BREAK_ON_FAIL(hr);
@@ -851,9 +825,7 @@ namespace H264WriterDLL {
 					BREAK_ON_FAIL(hr);
 				}
 				// release sample
-				if (pSample) pSample->Release();
-
-				pSample = nullptr;
+				SafeRelease(&pSample);
 			} while (false);
 
 			return hr;
@@ -998,7 +970,6 @@ namespace H264WriterDLL {
 		LONG m_cbWidth;
 		DWORD m_cbBuffer;
 		IMFMediaBuffer* m_pBuffer;
-		bool m_CoInited;
 		bool m_MFInited;
 		IMFSourceReader* m_pSourceReader;
 		IMFSinkWriter* m_pSinkWriter;
