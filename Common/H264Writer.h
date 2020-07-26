@@ -12,6 +12,7 @@
 #include <Mfreadwrite.h>
 #include <mferror.h>
 #include <Codecapi.h>
+#include <strmif.h>
 #include <vector>
 #include <string>
 
@@ -68,15 +69,19 @@ enum class Processing
 	HardwareAcceleration,
 	Software
 };
+enum class RateControlMode
+{
+	None,
+	UnconstrainedVBR, // Variable Bitrate
+	Quality,
+	CBR // Constant Bitrate
+};
 class H264Writer
 {
 public:
 	// Format constants
 	const GUID   VIDEO_ENCODING_FORMAT = MFVideoFormat_H264;
 	const GUID   VIDEO_INPUT_FORMAT = MFVideoFormat_RGB32;
-
-	UINT32 getEncCommonQuality() const { return m_EncCommonQuality; }
-	void setEncCommonQuality(UINT32 val) { m_EncCommonQuality = val; }
 
 	UINT32 getVideoFPS() const { return m_VideoFPS; }
 	void setVideoFPS(UINT32 val) {
@@ -94,7 +99,11 @@ public:
 	H264Writer(const wchar_t* mp3_file, const wchar_t* dest_file, VideoCodec codec, 
 		int width, int height, int fps, int duration /*in milliseconds*/, 
 		FrameRenderer* frameRenderer,
-		UINT32 bitrate = 4000000) :
+		UINT32 bitrate = 4000000,
+		int numWorkerThreads = 0 /* 0 leaves to default */, 
+		int qualityVsSpeed = 100 /* [0:100] 0 for speed, 100 for quality */, 
+		RateControlMode mode = RateControlMode::Quality, 
+		int quality = 100 /* Only valid when mode is RateControlMode::Quality. [0:100] 0 for smaller file size and less quality, 100 for bigger file size and more quality */) :
 		m_MP3Filename(mp3_file),
 		m_DestFilename(dest_file),
 		m_Width(width),
@@ -109,11 +118,14 @@ public:
 		m_VideoFPS(fps),
 		m_FrameDuration(10 * 1000 * 1000 / m_VideoFPS),
 		m_VideoBitrate(bitrate),
-		m_EncCommonQuality(100),
 		m_VideoCodec(codec),
 		m_nStreams(0),
 		m_Duration(duration),
 		m_MP3Duration(0),
+		m_NumWorkerThreads(numWorkerThreads),
+		m_QualityVsSpeed(qualityVsSpeed),
+		m_Mode(mode),
+		m_Quality(quality),
 		m_FrameRenderer(frameRenderer)
 	{
 		if (m_MP3Filename == L"" && duration == -1)
@@ -263,6 +275,8 @@ public:
 			BREAK_ON_FAIL(hr);
 			hr = SetVideoInputType(&pMediaTypeIn, streamIndex);
 			BREAK_ON_FAIL(hr);
+			hr = SetQuality(streamIndex); // no need to check HR, ok to fail here.
+			BREAK_ON_FAIL(hr);
 
 			hr = m_pSinkWriter->BeginWriting();
 			BREAK_ON_FAIL(hr);
@@ -272,6 +286,54 @@ public:
 
 		SafeRelease(&pMediaTypeOut);
 		SafeRelease(&pMediaTypeIn);
+		return hr;
+	}
+
+	HRESULT SetQuality(DWORD& streamIndex)
+	{
+		CComPtr<ICodecAPI> ca;
+		HRESULT hr = m_pSinkWriter->GetServiceForStream(streamIndex, GUID_NULL, __uuidof(ICodecAPI), (void**)&ca);
+		if (ca)
+		{
+			if (m_NumWorkerThreads)
+			{
+				VARIANT v = {};
+				v.vt = VT_UI4;
+				v.ulVal = m_NumWorkerThreads;
+				ca->SetValue(&CODECAPI_AVEncNumWorkerThreads, &v);
+			}
+			if (m_QualityVsSpeed >= 0 && m_QualityVsSpeed <= 100)
+			{
+				VARIANT v = {};
+				v.vt = VT_UI4;
+				v.ulVal = m_QualityVsSpeed;
+				ca->SetValue(&CODECAPI_AVEncCommonQualityVsSpeed, &v);
+			}
+
+			if (m_Mode != RateControlMode::None)
+			{
+				VARIANT v = {};
+				v.vt = VT_UI4;
+				if (m_Mode == RateControlMode::UnconstrainedVBR)
+					v.ulVal = eAVEncCommonRateControlMode_UnconstrainedVBR;
+				if (m_Mode == RateControlMode::Quality)
+					v.ulVal = eAVEncCommonRateControlMode_Quality;
+				if (m_Mode == RateControlMode::CBR)
+					v.ulVal = eAVEncCommonRateControlMode_CBR;
+				ca->SetValue(&CODECAPI_AVEncCommonRateControlMode, &v);
+				if (m_Mode == RateControlMode::Quality)
+				{
+					VARIANT v7 = {};
+					v7.vt = VT_UI4;
+					if (m_Quality >= 0 && m_Quality <= 100)
+						v7.ulVal = m_Quality;
+					else
+						v7.ulVal = 100;
+
+					ca->SetValue(&CODECAPI_AVEncCommonQuality, &v7);
+				}
+			}
+		}
 		return hr;
 	}
 
@@ -299,20 +361,6 @@ public:
 			BREAK_ON_FAIL(hr);
 		}
 	
-
-		//hr = pMediaTypeOut->SetUINT32(CODECAPI_AVEncCommonRateControlMode, eAVEncCommonRateControlMode_Quality);
-		hr = (*pMediaTypeOut)->SetUINT32(CODECAPI_AVEncCommonRateControlMode, eAVEncCommonRateControlMode_UnconstrainedVBR);
-		BREAK_ON_FAIL(hr);
-		hr = (*pMediaTypeOut)->SetUINT32(CODECAPI_AVEncCommonQuality, m_EncCommonQuality);
-		BREAK_ON_FAIL(hr);
-		hr = (*pMediaTypeOut)->SetUINT32(CODECAPI_AVEncVideoOutputColorLighting, eAVEncVideoColorLighting_Office);
-		BREAK_ON_FAIL(hr);
-		hr = (*pMediaTypeOut)->SetUINT32(CODECAPI_AVEncVideoOutputColorPrimaries, eAVEncVideoColorPrimaries_SameAsSource);
-		BREAK_ON_FAIL(hr);
-		hr = (*pMediaTypeOut)->SetUINT32(CODECAPI_AVEncVideoOutputColorTransferFunction, eAVEncVideoColorTransferFunction_SameAsSource);
-		BREAK_ON_FAIL(hr);
-		hr = (*pMediaTypeOut)->SetUINT32(CODECAPI_AVEncCommonQualityVsSpeed, 100); // 100 for quality and 0 for speed
-		BREAK_ON_FAIL(hr);
 		hr = (*pMediaTypeOut)->SetUINT32(MF_MT_AVG_BITRATE, m_VideoBitrate);
 		BREAK_ON_FAIL(hr);
 		hr = (*pMediaTypeOut)->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlace_Progressive);
@@ -970,11 +1018,14 @@ private:
 	UINT32 m_VideoBitrate;
 	UINT32 m_VideoFPS;
 	UINT64 m_FrameDuration;
-	UINT32 m_EncCommonQuality;
 	VideoCodec m_VideoCodec;
 	int m_nStreams;
 	int m_Duration; // duration in millisecond
 	int m_MP3Duration;
+	int m_NumWorkerThreads;
+	int m_QualityVsSpeed;
+	RateControlMode m_Mode;
+	int m_Quality;
 	FrameRenderer* m_FrameRenderer;
 };
 

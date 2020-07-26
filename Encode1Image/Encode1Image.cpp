@@ -53,7 +53,7 @@ int main()
 
 	RenderRedImage frameRenderer;
 
-	H264Writer writer(musicFile.c_str(), videoFile.c_str(), VideoCodec::H264, 640, 480, 30, 60000, &frameRenderer);
+	H264Writer writer(musicFile.c_str(), videoFile.c_str(), VideoCodec::H264, 640, 480, 30, 60000, &frameRenderer, 4000000, 6, 100, RateControlMode::Quality, 100);
 	if (writer.IsValid())
 	{
 		if (writer.Process())
@@ -156,7 +156,7 @@ int main()
 	std::wstring videoFile(L"C:\\temp\\JpgVideo.mp4");
 
 	RenderJPG frameRenderer;
-	H264Writer writer(musicFile.c_str(), videoFile.c_str(), VideoCodec::H264, 640, 480, 30, 10000, &frameRenderer);
+	H264Writer writer(musicFile.c_str(), videoFile.c_str(), VideoCodec::H264, 640, 480, 30, 10000, &frameRenderer, 4000000, 6, 100, RateControlMode::Quality, 100);
 	if (writer.IsValid())
 	{
 		if (writer.Process())
@@ -317,7 +317,7 @@ int main()
 
 	// Warning JPG1 and JPG2 must have the same dimensions
 	Render2JPG frameRenderer(L"image\\first.jpg", L"image\\second.jpg");
-	H264Writer writer(musicFile.c_str(), videoFile.c_str(), VideoCodec::H264, 640, 480, 30, 3000, &frameRenderer);
+	H264Writer writer(musicFile.c_str(), videoFile.c_str(), VideoCodec::H264, 640, 480, 30, 3000, &frameRenderer, 4000000, 6, 100, RateControlMode::Quality, 100);
 	if (writer.IsValid())
 	{
 		if (writer.Process())
@@ -460,7 +460,7 @@ int main()
 
 	RenderText frameRenderer(L"image\\Mandy.png", L"image\\Frenzy.png");
 
-	H264Writer writer(musicFile.c_str(), videoFile.c_str(), VideoCodec::H264, 640, 480, 60, 2000, &frameRenderer);
+	H264Writer writer(musicFile.c_str(), videoFile.c_str(), VideoCodec::H264, 640, 480, 60, 2000, &frameRenderer, 4000000, 6, 100, RateControlMode::Quality, 100);
 	if (writer.IsValid())
 	{
 		if (writer.Process())
