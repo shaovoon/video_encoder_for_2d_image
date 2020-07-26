@@ -275,7 +275,7 @@ public:
 			BREAK_ON_FAIL(hr);
 			hr = SetVideoInputType(&pMediaTypeIn, streamIndex);
 			BREAK_ON_FAIL(hr);
-			hr = SetQuality(streamIndex); // no need to check HR, ok to fail here.
+			hr = SetQuality(streamIndex);
 			BREAK_ON_FAIL(hr);
 
 			hr = m_pSinkWriter->BeginWriting();
