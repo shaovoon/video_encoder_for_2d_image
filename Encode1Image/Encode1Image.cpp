@@ -48,6 +48,7 @@ public:
 
 int main()
 {
+	printf("HasHEVC(): %d\n", H264Writer::HasHEVC());
 	std::wstring musicFile(L"");
 	std::wstring videoFile(L"C:\\temp\\RedVideo.mp4");
 

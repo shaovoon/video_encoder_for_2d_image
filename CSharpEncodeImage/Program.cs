@@ -34,6 +34,7 @@ namespace CSharpEncodeImage
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("HasHEVC(): {0}\n", H264Writer.HasHEVC());
             string musicFile = "";
             string videoFile = "C:\\temp\\RedVideoCSharp.mp4";
 

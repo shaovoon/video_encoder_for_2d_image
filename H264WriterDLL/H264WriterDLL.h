@@ -918,6 +918,15 @@ namespace H264WriterDLL {
 			}
 			return SUCCEEDED(hr);
 		}
+		public: static bool HasHEVC()
+		{
+			std::vector<std::wstring> encoders;
+			if (H264Writer::EnumVideoEncoder(encoders, Processing::HardwareAcceleration, VideoCodec::HEVC))
+			{
+				return encoders.size() > 0;
+			}
+			return false;
+		}
 		const bool Process()
 		{
 			if (IsValid())
