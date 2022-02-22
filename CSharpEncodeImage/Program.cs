@@ -43,7 +43,7 @@ namespace CSharpEncodeImage
 
             RenderRedImage frameRenderer = new RenderRedImage();
 
-            H264Writer writer = new H264Writer(musicFile, videoFile, VideoCodec.H264, Processing.Software, 640, 480, 30, 60000, frameRenderer, 4000000, 0, 100, RateControlMode.Quality, 100);
+            H264Writer writer = new H264Writer(musicFile, videoFile, VideoCodec.H264, Processing.HardwareAcceleration, 640, 480, 30, 60000, frameRenderer, 4000000, 0, 100, RateControlMode.Quality, 100);
             if (writer.IsValid())
             {
                 if (writer.Process())
