@@ -99,7 +99,7 @@ namespace H264WriterDLL {
 	public: int GetHeight() { return m_Height; }
 
 		// set duration to -1 when you want the duration to be the same as mp3
-		H264Writer(String^ mp3_file, String^ dest_file, VideoCodec codec,
+		H264Writer(String^ mp3_file, String^ dest_file, VideoCodec codec, Processing processing,
 			int width, int height, int fps, int duration /*in milliseconds*/,
 			FrameRenderer^ frameRenderer,
 			UINT32 bitrate,
@@ -124,6 +124,7 @@ namespace H264WriterDLL {
 			m_VideoCodec = codec;
 			m_nStreams = 0;
 			m_Duration = duration;
+			m_Processing = processing;
 			m_MP3Duration = 0;
 			m_NumWorkerThreads = numWorkerThreads;
 			m_QualityVsSpeed = qualityVsSpeed;
@@ -259,11 +260,21 @@ namespace H264WriterDLL {
 
 				pin_ptr<const wchar_t> dest_file = PtrToStringChars(m_DestFilename);
 				IMFSinkWriter* sink_writer = m_pSinkWriter;
-				IMFAttributes* attrs = nullptr;
-				MFCreateAttributes(&attrs, 1);
-				attrs->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, TRUE);
 
-				hr = MFCreateSinkWriterFromURL(dest_file, nullptr, attrs, &sink_writer);
+				if (m_Processing == Processing::HardwareAcceleration)
+				{
+					IMFAttributes* attrs = nullptr;
+					MFCreateAttributes(&attrs, 1);
+					attrs->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, TRUE);
+
+					hr = MFCreateSinkWriterFromURL(dest_file, nullptr, attrs, &sink_writer);
+
+					SafeRelease(&attrs);
+				}
+				else
+				{
+					hr = MFCreateSinkWriterFromURL(dest_file, nullptr, nullptr, &sink_writer);
+				}
 				BREAK_ON_FAIL(hr);
 				m_pSinkWriter = sink_writer;
 
@@ -284,7 +295,6 @@ namespace H264WriterDLL {
 
 				*videoStreamIndex = streamIndex;
 
-				SafeRelease(&attrs);
 			} while (false);
 
 			SafeRelease(&pMediaTypeOut);
@@ -294,6 +304,9 @@ namespace H264WriterDLL {
 
 		HRESULT SetQuality(DWORD& streamIndex)
 		{
+			if (m_Processing == Processing::Software)
+				return S_FALSE;
+
 			ICodecAPI* ca=NULL;
 			HRESULT hr = m_pSinkWriter->GetServiceForStream(streamIndex, GUID_NULL, __uuidof(ICodecAPI), (void**)&ca);
 			if (ca)
@@ -918,10 +931,19 @@ namespace H264WriterDLL {
 			}
 			return SUCCEEDED(hr);
 		}
-		public: static bool HasHEVC()
+		public: static bool HasH264(Processing processing)
 		{
 			std::vector<std::wstring> encoders;
-			if (H264Writer::EnumVideoEncoder(encoders, Processing::HardwareAcceleration, VideoCodec::HEVC))
+			if (H264Writer::EnumVideoEncoder(encoders, processing, VideoCodec::H264))
+			{
+				return encoders.size() > 0;
+			}
+			return false;
+		}
+		public: static bool HasHEVC(Processing processing)
+		{
+			std::vector<std::wstring> encoders;
+			if (H264Writer::EnumVideoEncoder(encoders, processing, VideoCodec::HEVC))
 			{
 				return encoders.size() > 0;
 			}
@@ -1038,6 +1060,7 @@ namespace H264WriterDLL {
 		VideoCodec m_VideoCodec;
 		int m_nStreams;
 		int m_Duration; // duration in millisecond
+		Processing m_Processing;
 		int m_MP3Duration;
 		int m_NumWorkerThreads;
 		int m_QualityVsSpeed;

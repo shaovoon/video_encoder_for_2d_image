@@ -96,8 +96,8 @@ public:
 	int& GetHeight() { return m_Height; }
 
 	// set duration to -1 when you want the duration to be the same as mp3
-	H264Writer(const wchar_t* mp3_file, const wchar_t* dest_file, VideoCodec codec, 
-		int width, int height, int fps, int duration /*in milliseconds*/, 
+	H264Writer(const wchar_t* mp3_file, const wchar_t* dest_file, VideoCodec codec, Processing processing,
+		int width, int height, int fps, int duration /*in milliseconds*/,
 		FrameRenderer* frameRenderer,
 		UINT32 bitrate = 4000000,
 		int numWorkerThreads = 0 /* 0 leaves to default */, 
@@ -121,6 +121,7 @@ public:
 		m_VideoCodec(codec),
 		m_nStreams(0),
 		m_Duration(duration),
+		m_Processing(processing),
 		m_MP3Duration(0),
 		m_NumWorkerThreads(numWorkerThreads),
 		m_QualityVsSpeed(qualityVsSpeed),
@@ -259,11 +260,18 @@ public:
 				MFTIME second = total_seconds % 60;
 				printf("Audio duration:%lld:%lld\n", minute, second);
 			}
-			CComPtr<IMFAttributes> attrs;
-			MFCreateAttributes(&attrs, 1);
-			attrs->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, TRUE);
+			if (m_Processing == Processing::HardwareAcceleration)
+			{
+				CComPtr<IMFAttributes> attrs;
+				MFCreateAttributes(&attrs, 1);
+				attrs->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, TRUE);
 
-			hr = MFCreateSinkWriterFromURL(m_DestFilename.c_str(), nullptr, attrs, &m_pSinkWriter);
+				hr = MFCreateSinkWriterFromURL(m_DestFilename.c_str(), nullptr, attrs, &m_pSinkWriter);
+			}
+			else
+			{
+				hr = MFCreateSinkWriterFromURL(m_DestFilename.c_str(), nullptr, nullptr, &m_pSinkWriter);
+			}
 			BREAK_ON_FAIL(hr);
 
 			// map the streams found in the source file from the source reader to the
@@ -291,6 +299,9 @@ public:
 
 	HRESULT SetQuality(DWORD& streamIndex)
 	{
+		if (m_Processing == Processing::Software)
+			return S_FALSE;
+
 		CComPtr<ICodecAPI> ca;
 		HRESULT hr = m_pSinkWriter->GetServiceForStream(streamIndex, GUID_NULL, __uuidof(ICodecAPI), (void**)&ca);
 		if (ca)
@@ -907,10 +918,19 @@ public:
 		}
 		return SUCCEEDED(hr);
 	}
-	static bool HasHEVC()
+	static bool HasH264(Processing processing)
 	{
 		std::vector<std::wstring> encoders;
-		if (H264Writer::EnumVideoEncoder(encoders, Processing::HardwareAcceleration, VideoCodec::HEVC))
+		if (H264Writer::EnumVideoEncoder(encoders, processing, VideoCodec::H264))
+		{
+			return encoders.size() > 0;
+		}
+		return false;
+	}
+	static bool HasHEVC(Processing processing)
+	{
+		std::vector<std::wstring> encoders;
+		if (H264Writer::EnumVideoEncoder(encoders, processing, VideoCodec::HEVC))
 		{
 			return encoders.size() > 0;
 		}
@@ -1030,6 +1050,7 @@ private:
 	VideoCodec m_VideoCodec;
 	int m_nStreams;
 	int m_Duration; // duration in millisecond
+	Processing m_Processing;
 	int m_MP3Duration;
 	int m_NumWorkerThreads;
 	int m_QualityVsSpeed;

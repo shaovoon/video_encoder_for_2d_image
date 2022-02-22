@@ -48,13 +48,16 @@ public:
 
 int main()
 {
-	printf("HasHEVC(): %d\n", H264Writer::HasHEVC());
+	printf("HasH264() Software: %d\n\n", H264Writer::HasH264(Processing::Software));
+	printf("HasH264() Hardware: %d\n\n", H264Writer::HasH264(Processing::HardwareAcceleration));
+	printf("HasHEVC() Software: %d\n\n", H264Writer::HasHEVC(Processing::Software));
+	printf("HasHEVC() Hardware: %d\n\n", H264Writer::HasHEVC(Processing::HardwareAcceleration));
 	std::wstring musicFile(L"");
 	std::wstring videoFile(L"C:\\temp\\RedVideo.mp4");
 
 	RenderRedImage frameRenderer;
 
-	H264Writer writer(musicFile.c_str(), videoFile.c_str(), VideoCodec::H264, 640, 480, 30, 60000, &frameRenderer, 4000000, 0, 100, RateControlMode::Quality, 100);
+	H264Writer writer(musicFile.c_str(), videoFile.c_str(), VideoCodec::HEVC, Processing::Software, 640, 480, 30, 60000, &frameRenderer, 4000000, 0, 100, RateControlMode::Quality, 100);
 	if (writer.IsValid())
 	{
 		if (writer.Process())

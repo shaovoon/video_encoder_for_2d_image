@@ -34,13 +34,16 @@ namespace CSharpEncodeImage
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("HasHEVC(): {0}\n", H264Writer.HasHEVC());
+            Console.WriteLine("HasH264() Software: {0}\n", H264Writer.HasH264(Processing.Software));
+            Console.WriteLine("HasH264() Hardware: {0}\n", H264Writer.HasH264(Processing.HardwareAcceleration));
+            Console.WriteLine("HasHEVC() Software: {0}\n", H264Writer.HasHEVC(Processing.Software));
+            Console.WriteLine("HasHEVC() Hardware: {0}\n", H264Writer.HasHEVC(Processing.HardwareAcceleration));
             string musicFile = "";
             string videoFile = "C:\\temp\\RedVideoCSharp.mp4";
 
             RenderRedImage frameRenderer = new RenderRedImage();
 
-            H264Writer writer = new H264Writer(musicFile, videoFile, VideoCodec.H264, 640, 480, 30, 60000, frameRenderer, 4000000, 0, 100, RateControlMode.Quality, 100);
+            H264Writer writer = new H264Writer(musicFile, videoFile, VideoCodec.H264, Processing.Software, 640, 480, 30, 60000, frameRenderer, 4000000, 0, 100, RateControlMode.Quality, 100);
             if (writer.IsValid())
             {
                 if (writer.Process())
