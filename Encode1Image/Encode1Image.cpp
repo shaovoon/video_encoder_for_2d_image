@@ -48,10 +48,12 @@ public:
 
 int main()
 {
+	::CoInitialize(NULL);
 	printf("HasH264() Software: %d\n\n", H264Writer::HasH264(Processing::Software));
 	printf("HasH264() Hardware: %d\n\n", H264Writer::HasH264(Processing::HardwareAcceleration));
 	printf("HasHEVC() Software: %d\n\n", H264Writer::HasHEVC(Processing::Software));
 	printf("HasHEVC() Hardware: %d\n\n", H264Writer::HasHEVC(Processing::HardwareAcceleration));
+	::CoUninitialize();
 	std::wstring musicFile(L"");
 	std::wstring videoFile(L"C:\\temp\\RedVideo.mp4");
 
