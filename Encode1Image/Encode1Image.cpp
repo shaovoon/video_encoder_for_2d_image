@@ -4,26 +4,6 @@
 #include <iostream>
 #include "../Common/H264Writer.h"
 
-/*
-int main()
-{
-	std::vector<std::wstring> encoders;
-	if (H264Writer::EnumVideoEncoder(encoders, Processing::Software, VideoCodec::H264))
-	{
-		for (size_t i = 0; i < encoders.size(); ++i)
-		{
-			printf("Video Encoder: %S\n", encoders[i].c_str());
-		}
-	}
-	else
-	{
-		printf("H264Writer::EnumVideoEncoder failed!\n");
-	}
-	return 0;
-}
-*/
-
-
 class RenderRedImage : public FrameRenderer
 {
 public:
