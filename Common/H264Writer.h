@@ -1,3 +1,13 @@
+// The MIT License (MIT)
+// H264Writer for 2D images 0.5.0
+// Copyright (C) 2019 - 2022, by Wong Shao Voon (shaovoon@yahoo.com)
+//
+// http://opensource.org/licenses/MIT
+
+// version 0.5.0: Added HasH264() and HasHEVC(). Remeber to call CoInitialize() before 
+//                calling HasH264() and HasHEVC(). Put back software encoding for testing in VMs. 
+//                Quality settings are ignored when software encoding is selected.
+
 #pragma once
 
 #include <Windows.h>
