@@ -5,7 +5,7 @@ H264/HEVC Video Encoder for 2D Image
 * Software encoding can be used during testing in VM where hardware acceleration is not available.
 * C# code can use the C++/CLI wrapper.
 
-_Note:_ Only even-numbered width framebuffer works due to the NV12 format.
+__Note:__ Only even-numbered width framebuffer works due to the NV12 format.
 
 [C++/C# Tutorial: Bring Your Animations to H264/HEVC Video](https://www.codeproject.com/Articles/5161187/Bring-Your-Animations-to-H264-HEVC-Video)
 
