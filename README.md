@@ -8,7 +8,7 @@
 
 __Note:__ Only even-numbered width framebuffer works due to the NV12 format.
 
-__Note:__ Remember to call CoInitialize() before calling HasH264() and HasHEVC() to detect H264 and HEVC.
+__Note:__ Remember to call CoInitialize() before calling HasH264() and HasHEVC() to detect H264 and HEVC codec.
 
 ## Reference Book
 
