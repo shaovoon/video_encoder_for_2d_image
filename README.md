@@ -7,6 +7,7 @@
 * C# code can use the C++/CLI wrapper.
 
 __Note:__ Only even-numbered width framebuffer works due to the NV12 format.
+
 __Note:__ Remember to call CoInitialize() before calling HasH264() and HasHEVC() to detect H264 and HEVC.
 
 ## Reference Book
