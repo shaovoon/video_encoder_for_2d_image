@@ -1,26 +1,13 @@
 # video_encoder_for_2d_image
-H264 Video Encoder for 2D Image
+H264/HEVC Video Encoder for 2D Image
 
-[tutorial](https://www.codeproject.com/Articles/5161187/Bring-Your-Animations-to-H264-HEVC-Video)
+* Hardware acceleration can be turned on after detection.
+* Software encoding can be used during testing in VM where hardware acceleration is not available.
+* C# code can use the C++/CLI wrapper.
 
-Hardware acceleration is available now by adding these 3 lines to set MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS in attributes and pass it to MFCreateSinkWriterFromURL
+_Note:_ Only even-numbered width framebuffer works due to the NV12 format.
 
-```
-CComPtr<IMFAttributes> attrs;
-MFCreateAttributes(&attrs, 1);
-attrs->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, TRUE);
-
-hr = MFCreateSinkWriterFromURL(m_DestFilename.c_str(), nullptr, attrs, &m_pSinkWriter);
-```
-
-![Image of TaskMgr](https://github.com/shaovoon/video_encoder_for_2d_image/blob/master/images/TaskMgr.png)
-
-## Quality parameters in Constructor in v0.4.2
-
-* int numWorkerThreads: 0 leaves to default
-* int qualityVsSpeed: [0:100] 0 for speed, 100 for quality
-* RateControlMode mode: 3 modes to choose from UnconstrainedVBR, Quality, CBR (VBR is variable bitrate and CBR is constant bitrate)
-* int quality: Only valid when mode is Quality. [0:100] 0 for smaller file size and lower quality, 100 for bigger file size and higher quality
+[C++/C# Tutorial: Bring Your Animations to H264/HEVC Video](https://www.codeproject.com/Articles/5161187/Bring-Your-Animations-to-H264-HEVC-Video)
 
 ## Reference Book
 
